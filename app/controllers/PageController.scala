@@ -41,7 +41,9 @@ class PageController @Inject() (pages: PageRepository, val messagesApi: Messages
     }
   }
 
-  def newPage = TODO
+  def newPage = Action { implicit request =>
+    Ok(views.html.newPage(createForm))
+  }
   def createPage = TODO
   def editPage(id: String) = TODO
   def updatePage(id: String) = TODO

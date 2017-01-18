@@ -1,0 +1,11 @@
+@import helper._
+@import controllers.forms.PageData
+@(pageForm: Form[PageData])(implicit messages: Messages)
+
+@main("New Page") {
+  @form(action = routes.PageController.createPage) {
+    @inputText(pageForm("id"))
+    @textarea(pageForm("content"))
+    <button type="submit">Create Page</button>
+  }
+}
