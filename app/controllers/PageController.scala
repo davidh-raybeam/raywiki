@@ -39,4 +39,9 @@ class PageController @Inject() (pages: PageRepository) extends Controller {
       Ok(views.html.page(page, navigation))
     }
   }
+
+  def newPage = TODO
+  def createPage = TODO
+  def editPage(id: String) = TODO
+  def updatePage(id: String) = TODO
 }
