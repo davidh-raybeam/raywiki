@@ -4,8 +4,11 @@ import models.Page
 import controllers.routes
 
 import javax.inject._
+import java.io.FileWriter
 import play.api._
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import scala.io.Source
+import scala.concurrent.Future
 import laika.api._
 import laika.parse.markdown.Markdown
 import laika.render.HTML
@@ -46,4 +49,18 @@ class PageRepository @Inject() (config: Configuration) {
     for {
       doc <- parsedContentsOfPage(id)
     } yield Page(id, renderTitle(doc), renderBody(doc))
+
+  def savePage(id: String, content: String): Future[Page] = Future {
+    val writer = fileForPage(id).fold[FileWriter](throw MissingConfigException("pages.root")) { file =>
+      new FileWriter(file)
+    }
+    try {
+      writer.write(content)
+    } finally writer.close
+    val document = parse.fromString(content)
+    Page(id, renderTitle(document), renderBody(document))
+  }
+
+  case class MissingConfigException(key: String)
+    extends RuntimeException(s"Missing configuration key: ${key}")
 }

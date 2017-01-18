@@ -3,12 +3,14 @@ package controllers
 import data.PageRepository
 import forms.PageData
 
+import scala.concurrent.Future
 import javax.inject._
 import play.api._
 import play.api.mvc._
 import play.api.i18n._
 import play.api.data._
 import play.api.data.Forms._
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 
 @Singleton
@@ -44,7 +46,19 @@ class PageController @Inject() (pages: PageRepository, val messagesApi: Messages
   def newPage = Action { implicit request =>
     Ok(views.html.newPage(createForm))
   }
-  def createPage = TODO
+
+  def createPage = Action.async { implicit request =>
+    createForm.bindFromRequest.fold(
+      formWithErrors => {
+        Future.successful(BadRequest(views.html.newPage(formWithErrors)))
+      },
+      pageData => {
+        pages.savePage(pageData.id.get, pageData.content).map { page =>
+          Redirect(routes.PageController.page(page.id))
+        }
+      }
+    )
+  }
   def editPage(id: String) = TODO
   def updatePage(id: String) = TODO
 }
