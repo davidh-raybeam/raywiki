@@ -1,0 +1,5 @@
+@(page: models.Page, navigation: Option[String])
+
+@main(page.title, navigation) {
+  @Html(page.content)
+}
