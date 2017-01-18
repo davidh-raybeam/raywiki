@@ -1,6 +1,7 @@
 package controllers
 
 import data.PageRepository
+import forms.PageData
 
 import javax.inject._
 import play.api._
@@ -10,23 +11,22 @@ import play.api.data.Forms._
 
 @Singleton
 class PageController @Inject() (pages: PageRepository) extends Controller {
-  case class PageForm(content: String, id: Option[String] = None)
 
   val createForm = Form(
     mapping(
       "id" -> nonEmptyText,
       "content" -> text
     ){
-      (id: String, content: String) => PageForm(content, Some(id))
+      (id: String, content: String) => PageData(content, Some(id))
     }{
-      (form: PageForm) => form.id.map { id => (id, form.content) }
+      (form: PageData) => form.id.map { id => (id, form.content) }
     }
   )
 
   val updateForm = Form(
     mapping(
       "content" -> text
-    )(PageForm(_, None))((form: PageForm) => Some(form.content))
+    )(PageData(_, None))((form: PageData) => Some(form.content))
   )
 
   def home = Action { implicit request =>
