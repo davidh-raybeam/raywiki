@@ -6,12 +6,13 @@ import forms.PageData
 import javax.inject._
 import play.api._
 import play.api.mvc._
+import play.api.i18n._
 import play.api.data._
 import play.api.data.Forms._
 
-@Singleton
-class PageController @Inject() (pages: PageRepository) extends Controller {
 
+@Singleton
+class PageController @Inject() (pages: PageRepository, val messagesApi: MessagesApi) extends Controller with I18nSupport {
   val createForm = Form(
     mapping(
       "id" -> nonEmptyText,
