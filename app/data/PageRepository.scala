@@ -45,6 +45,8 @@ class PageRepository @Inject() (config: Configuration) {
   private def renderBody(doc: Document) =
     render.from(doc).toString
 
+  def pageExists(id: String): Boolean = fileForPage(id).filter(_.exists).isDefined
+
   def getPage(id: String): Option[Page] =
     for {
       doc <- parsedContentsOfPage(id)

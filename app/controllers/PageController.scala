@@ -17,13 +17,13 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 class PageController @Inject() (pages: PageRepository, val messagesApi: MessagesApi) extends Controller with I18nSupport {
   val createForm = Form(
     mapping(
-      "id" -> nonEmptyText,
+      "id" -> nonEmptyText.verifying(pattern("[a-z0-9]+".r, error="Page id must be lowercase alphanumeric.")),
       "content" -> text
     ){
       (id: String, content: String) => PageData(content, Some(id))
     }{
       (form: PageData) => form.id.map { id => (id, form.content) }
-    }
+    } verifying("Page id must be unique.", pageData => !pages.pageExists(pageData.id getOrElse "home"))
   )
 
   val updateForm = Form(
