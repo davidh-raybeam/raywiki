@@ -66,5 +66,18 @@ class PageController @Inject() (pages: PageRepository, val messagesApi: Messages
     }
   }
 
-  def updatePage(id: String) = TODO
+  def updatePage(id: String) = Action.async { implicit request =>
+    pages.getPage(id).fold[Future[Result]](Future.successful(NotFound)) { page =>
+      updateForm.bindFromRequest.fold(
+        formWithErrors => {
+          Future.successful(BadRequest(views.html.editPage(page, formWithErrors)))
+        },
+        updateRequest => {
+          pages.savePage(page.id, updateRequest.content).map { _ =>
+            Redirect(routes.PageController.page(page.id))
+          }
+        }
+      )
+    }
+  }
 }
