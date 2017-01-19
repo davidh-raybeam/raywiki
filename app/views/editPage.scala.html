@@ -1,0 +1,12 @@
+@import helper._
+@import controllers.forms.PageEditRequest
+@(page: Page, pageForm: Form[PageEditRequest])(implicit messages: Messages, headers: RequestHeader)
+
+@main(s"Edit Page ${page.title}") {
+  @form(action = routes.PageController.updatePage(page.id)) {
+    <p>Page id @page.id</p>
+    @textarea(pageForm("content"))
+    @CSRF.formField
+    <button type="submit">Update Page</button>
+  }
+}

@@ -58,6 +58,13 @@ class PageController @Inject() (pages: PageRepository, val messagesApi: Messages
       }
     )
   }
-  def editPage(id: String) = TODO
+
+  def editPage(id: String) = Action { implicit request =>
+    pages.getPage(id).fold[Result](NotFound) { page =>
+      val editForm = updateForm.fill(PageEditRequest(page))
+      Ok(views.html.editPage(page, editForm))
+    }
+  }
+
   def updatePage(id: String) = TODO
 }

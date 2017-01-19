@@ -33,11 +33,14 @@ class PageRepository @Inject() (config: Configuration) {
       rootPath <- config.getString("pages.root")
     } yield new java.io.File(rootPath, s"${id}.md")
 
-  private def parsedContentsOfPage(id: String) =
+  private def rawContentsOfPage(id: String) =
     for {
       file <- fileForPage(id)
       if file.exists
-    } yield parse.fromFile(file).rewrite(linkRewriter)
+    } yield Source.fromFile(file).mkString
+
+  private def parseDocument(rawContent: String) =
+    parse.fromString(rawContent).rewrite(linkRewriter)
 
   private def renderTitle(doc: Document) =
     doc.title.map(render.from(_).toString).mkString
@@ -49,8 +52,9 @@ class PageRepository @Inject() (config: Configuration) {
 
   def getPage(id: String): Option[Page] =
     for {
-      doc <- parsedContentsOfPage(id)
-    } yield Page(id, renderTitle(doc), renderBody(doc))
+      raw <- rawContentsOfPage(id)
+      doc = parseDocument(raw)
+    } yield Page(id, renderTitle(doc), renderBody(doc), raw)
 
   def savePage(id: String, content: String): Future[Page] = Future {
     val writer = fileForPage(id).fold[FileWriter](throw MissingConfigException("pages.root")) { file =>
@@ -60,7 +64,7 @@ class PageRepository @Inject() (config: Configuration) {
       writer.write(content)
     } finally writer.close
     val document = parse.fromString(content)
-    Page(id, renderTitle(document), renderBody(document))
+    Page(id, renderTitle(document), renderBody(document), content)
   }
 
   case class MissingConfigException(key: String)
