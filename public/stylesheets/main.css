@@ -73,6 +73,18 @@ nav ul li {
   padding: 0 0.5em;
 }
 
+article aside {
+  float: right;
+  background-color: #eee;
+  padding: 1em;
+}
+
+article aside ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
 /* Let's make sure all's aligned */
 hr, .hr {
   border: 1px solid;

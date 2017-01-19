@@ -3,6 +3,11 @@
 @(page: Page, pageForm: Form[PageEditRequest])(implicit messages: Messages, headers: RequestHeader, navigation: () => Option[String])
 
 @main(s"Edit Page ${page.title}") {
+  <aside>
+    <ul>
+      <li><a href="@routes.PageController.page(page.id)">Back to page</a></li>
+    </ul>
+  </aside>
   @form(action = routes.PageController.updatePage(page.id)) {
     <p>Page id @page.id</p>
     @textarea(pageForm("content"))

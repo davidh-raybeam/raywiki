@@ -3,6 +3,11 @@
 @(pageForm: Form[NewPageRequest])(implicit messages: Messages, headers: RequestHeader, navigation: () => Option[String])
 
 @main("New Page") {
+  <aside>
+    <ul>
+      <li><a href="@routes.PageController.home()">Home</a></li>
+    </ul>
+  </aside>
   @form(action = routes.PageController.createPage) {
     @inputText(pageForm("pageid"))
     @textarea(pageForm("content"))
