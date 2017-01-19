@@ -1,7 +1,7 @@
 package controllers
 
 import data.PageRepository
-import forms.PageData
+import forms._
 
 import scala.concurrent.Future
 import javax.inject._
@@ -22,17 +22,13 @@ class PageController @Inject() (pages: PageRepository, val messagesApi: Messages
         .verifying(pattern("[a-z0-9]+".r, name="pageid.pattern", error="pageid.pattern.error"))
         .verifying("pageid.unique", !pages.pageExists(_)),
       "content" -> text
-    ){
-      (id: String, content: String) => PageData(content, Some(id))
-    }{
-      (form: PageData) => form.id.map { id => (id, form.content) }
-    } verifying("Page id must be unique.", pageData => !pages.pageExists(pageData.id getOrElse "home"))
+    )(NewPageRequest.apply)(NewPageRequest.unapply)
   )
 
   val updateForm = Form(
     mapping(
       "content" -> text
-    )(PageData(_, None))((form: PageData) => Some(form.content))
+    )(PageEditRequest.apply)(PageEditRequest.unapply)
   )
 
   def home = Action { implicit request =>
@@ -55,8 +51,8 @@ class PageController @Inject() (pages: PageRepository, val messagesApi: Messages
       formWithErrors => {
         Future.successful(BadRequest(views.html.newPage(formWithErrors)))
       },
-      pageData => {
-        pages.savePage(pageData.id.get, pageData.content).map { page =>
+      createRequest => {
+        pages.savePage(createRequest.id, createRequest.content).map { page =>
           Redirect(routes.PageController.page(page.id))
         }
       }
