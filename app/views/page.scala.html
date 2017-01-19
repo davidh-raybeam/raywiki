@@ -1,4 +1,4 @@
-@(page: models.Page, navigation: Option[String])
+@(page: models.Page)(implicit navigation: () => Option[String])
 
 @main(page.title, navigation) {
   @Html(page.content)

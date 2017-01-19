@@ -1,6 +1,6 @@
 @import helper._
 @import controllers.forms.PageEditRequest
-@(page: Page, pageForm: Form[PageEditRequest])(implicit messages: Messages, headers: RequestHeader)
+@(page: Page, pageForm: Form[PageEditRequest])(implicit messages: Messages, headers: RequestHeader, navigation: () => Option[String])
 
 @main(s"Edit Page ${page.title}") {
   @form(action = routes.PageController.updatePage(page.id)) {

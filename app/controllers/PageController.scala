@@ -31,14 +31,16 @@ class PageController @Inject() (pages: PageRepository, val messagesApi: Messages
     )(PageEditRequest.apply)(PageEditRequest.unapply)
   )
 
+  implicit val navigation: () => Option[String] = () =>
+    pages.getPage("navigation").map(_.content)
+
   def home = Action { implicit request =>
     Redirect(routes.PageController.page("home"))
   }
 
   def page(id: String) = Action { implicit request =>
     pages.getPage(id).fold[Result](NotFound) { page =>
-      val navigation = pages.getPage("navigation").map(_.content)
-      Ok(views.html.page(page, navigation))
+      Ok(views.html.page(page))
     }
   }
 

@@ -1,6 +1,6 @@
 @import helper._
 @import controllers.forms.NewPageRequest
-@(pageForm: Form[NewPageRequest])(implicit messages: Messages, headers: RequestHeader)
+@(pageForm: Form[NewPageRequest])(implicit messages: Messages, headers: RequestHeader, navigation: () => Option[String])
 
 @main("New Page") {
   @form(action = routes.PageController.createPage) {
