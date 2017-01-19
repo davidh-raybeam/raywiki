@@ -1,3 +1,7 @@
+/* This was originally generated to keep the text on the page in a typographic
+   grid, but I got tired of calculating things and broke the grid. Don't judge
+   me too harshly. */
+
 html, .root {
   font-size: 16px;
   line-height: 24px;
@@ -85,7 +89,51 @@ article aside ul {
   margin-bottom: 0;
 }
 
-/* Let's make sure all's aligned */
+form dl {
+  padding: 1em;
+}
+
+form dl.error {
+  background-color: #fcc;
+}
+
+form dl dt {
+  font-weight: bold
+}
+
+form dl dd {
+  margin-left: 0;
+}
+
+form dl dd.info {
+  font-size: 0.75em;
+  color: #888;
+}
+
+form dl dd.error {
+  font-size: 0.75em;
+  color: #800;
+}
+
+form input[type="text"] {
+  padding: 0.5em;
+  width: 25%;
+  font-size: 1em;
+}
+
+form textarea {
+  font-family: monospace;
+  width: 100%;
+  font-size: 0.75em;
+  padding: 0.5em;
+  height: 20em;
+}
+
+form button {
+  padding: 0.5em;
+  font-size: 0.75em;
+}
+
 hr, .hr {
   border: 1px solid;
   margin: -1px 0;

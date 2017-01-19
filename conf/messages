@@ -3,3 +3,4 @@ pageid=Page ID
 pageid.pattern=Numbers and lowercase letters only
 pageid.pattern.error=Must consist only of numbers and lowercase letters
 pageid.unique=Page ID is already taken
+content=Page Content

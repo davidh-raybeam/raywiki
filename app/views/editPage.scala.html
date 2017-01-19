@@ -8,10 +8,18 @@
       <li><a href="@routes.PageController.page(page.id)">Back to page</a></li>
     </ul>
   </aside>
+  <h1>Editing &ldquo;@page.title&rdquo;</h1>
   @form(action = routes.PageController.updatePage(page.id)) {
-    <p>Page id @page.id</p>
+    <dl>
+      <dt>@messages("pageid")</dt>
+      <dd>@page.id</dd>
+    </dl>
     @textarea(pageForm("content"))
     @CSRF.formField
-    <button type="submit">Update Page</button>
+    <dl>
+      <dt>
+        <button type="submit">Update Page</button>
+      </dt>
+    </dl>
   }
 }
