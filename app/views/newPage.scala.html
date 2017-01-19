@@ -4,7 +4,7 @@
 
 @main("New Page") {
   @form(action = routes.PageController.createPage) {
-    @inputText(pageForm("id"))
+    @inputText(pageForm("pageid"))
     @textarea(pageForm("content"))
     @CSRF.formField
     <button type="submit">Create Page</button>

@@ -9,6 +9,7 @@ import play.api._
 import play.api.mvc._
 import play.api.i18n._
 import play.api.data._
+import play.api.data.validation.Constraints._
 import play.api.data.Forms._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
@@ -17,7 +18,9 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 class PageController @Inject() (pages: PageRepository, val messagesApi: MessagesApi) extends Controller with I18nSupport {
   val createForm = Form(
     mapping(
-      "id" -> nonEmptyText.verifying(pattern("[a-z0-9]+".r, error="Page id must be lowercase alphanumeric.")),
+      "pageid" -> nonEmptyText
+        .verifying(pattern("[a-z0-9]+".r, name="pageid.pattern", error="pageid.pattern.error"))
+        .verifying("pageid.unique", !pages.pageExists(_)),
       "content" -> text
     ){
       (id: String, content: String) => PageData(content, Some(id))
