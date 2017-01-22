@@ -51,7 +51,7 @@ class PageController @Inject() (pages: PageRepository, val messagesApi: Messages
       pages.getPage(id).map { pageOption =>
         pageOption.map { page =>
           PageRequest(page, request.navigation, request)
-        }.toRight(NotFound)
+        }.toRight(NotFound.as(HTML))
       }
     }
   }
