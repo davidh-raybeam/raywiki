@@ -1,12 +1,13 @@
-@(page: models.Page)(implicit navigation: () => Option[String])
+@import controllers.PageController.PageRequest
+@()(implicit request: PageRequest[_])
 
-@main(page.title) {
+@main(request.page.title)(request.navigation) {
   <aside>
     <ul>
       <li><a href="@routes.PageController.newPage()">Create new page</a></li>
-      <li><a href="@routes.PageController.editPage(page.id)">Edit this page</a></li>
+      <li><a href="@routes.PageController.editPage(request.page.id)">Edit this page</a></li>
       <li><a href="@routes.PageController.editPage("navigation")">Edit the navigation</a></li>
     </ul>
   </aside>
-  @Html(page.content)
+  @Html(request.page.content)
 }

@@ -1,18 +1,19 @@
 @import helper._
 @import controllers.forms.PageEditRequest
-@(page: Page, pageForm: Form[PageEditRequest])(implicit messages: Messages, headers: RequestHeader, navigation: () => Option[String])
+@import controllers.PageController.PageRequest
+@(pageForm: Form[PageEditRequest])(implicit messages: Messages, headers: RequestHeader, request: PageRequest[_])
 
-@main(s"Edit Page ${page.title}") {
+@main(s"Edit Page ${request.page.title}")(request.navigation) {
   <aside>
     <ul>
-      <li><a href="@routes.PageController.page(page.id)">Back to page</a></li>
+      <li><a href="@routes.PageController.page(request.page.id)">Back to page</a></li>
     </ul>
   </aside>
-  <h1>Editing &ldquo;@page.title&rdquo;</h1>
-  @form(action = routes.PageController.updatePage(page.id)) {
+  <h1>Editing &ldquo;@request.page.title&rdquo;</h1>
+  @form(action = routes.PageController.updatePage(request.page.id)) {
     <dl>
       <dt>@messages("pageid")</dt>
-      <dd>@page.id</dd>
+      <dd>@request.page.id</dd>
     </dl>
     @textarea(pageForm("content"))
     @CSRF.formField

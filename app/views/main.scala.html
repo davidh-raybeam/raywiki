@@ -1,4 +1,5 @@
-@(title: String)(content: Html)(implicit navigation: () => Option[String])
+@import controllers.PageController.Navigation
+@(title: String)(navigation: Navigation)(content: Html)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,11 +13,7 @@
       <h1>Demo Play Application</h1>
     </header>
     <nav>
-      @navigation().map(Html.apply).getOrElse {
-        <ul>
-          <li><a href="@routes.PageController.page("home")">Home</a></li>
-        </ul>
-      }
+      @navigation.content.map(Html.apply).getOrElse("")
     </nav>
     <article>
       @content
