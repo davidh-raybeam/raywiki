@@ -7,6 +7,7 @@ import javax.inject._
 import java.io.FileWriter
 import play.api._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.db.slick.DatabaseConfigProvider
 import scala.io.Source
 import scala.concurrent.Future
 import laika.api._
@@ -14,9 +15,10 @@ import laika.parse.markdown.Markdown
 import laika.render.HTML
 import laika.tree.Documents.Document
 import laika.tree.Elements.{RewriteRule, ExternalLink}
+import slick.driver.SQLiteDriver.api._
+import slick.driver.SQLiteDriver
 
-@Singleton
-class PageRepository @Inject() (config: Configuration) {
+object PageRepository {
   private lazy val parse = Parse as Markdown
   private lazy val render = Render as HTML
 
@@ -28,30 +30,41 @@ class PageRepository @Inject() (config: Configuration) {
     }
   }
 
-  private def fileForPage(id: String) =
-    for {
-      rootPath <- config.getString("pages.root")
-    } yield new java.io.File(rootPath, s"${id}.md")
-
-  private def rawContentsOfPage(id: String) =
-    for {
-      file <- fileForPage(id)
-      if file.exists
-    } yield Source.fromFile(file).mkString
-
-  private def parseDocument(rawContent: String) =
-    parse.fromString(rawContent).rewrite(linkRewriter)
-
-  private def renderTitle(doc: Document) =
-    doc.title.map(render.from(_).toString).mkString
-
-  private def renderBody(doc: Document) =
+  private def renderBody(rawContent: String) = {
+    val doc = parse.fromString(rawContent).rewrite(linkRewriter)
     render.from(doc).toString
+  }
+
+  private def dbRowToPage(row: (String, String, String)) = row match {
+    case (id, title, rawContent) =>
+      Page(id, title, renderBody(rawContent), rawContent)
+  }
+
+  private def pageToDbRow(page: Page): Option[(String, String, String)] =
+    Some((page.id, page.title, page.rawContent))
 
 
-  def getPage(id: String): Future[Option[Page]] = ???
+  class PageTable(tag: Tag) extends Table[Page](tag, "pages") {
+    def id = column[String]("page_id", O.PrimaryKey)
+    def title = column[String]("title")
+    def rawContent = column[String]("content")
 
-  def pageExists(id: String): Future[Boolean] = ???
+    def * = (id, title, rawContent) <> (dbRowToPage, pageToDbRow)
+  }
+  val pages = TableQuery[PageTable]
+}
+
+@Singleton
+class PageRepository @Inject() (dbConfigProvider: DatabaseConfigProvider) {
+  private val dbConfig = dbConfigProvider.get[SQLiteDriver]
+  private val db = dbConfig.db
+  import PageRepository.pages
+
+  def getPage(id: String): Future[Option[Page]] =
+    db.run(pages.filter(_.id === id).result.headOption)
+
+  def pageExists(id: String): Future[Boolean] =
+    db.run(pages.filter(_.id === id).exists.result)
 
   def savePage(id: String, content: String): Future[Page] = ???
 }
