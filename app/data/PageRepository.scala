@@ -48,25 +48,10 @@ class PageRepository @Inject() (config: Configuration) {
   private def renderBody(doc: Document) =
     render.from(doc).toString
 
-  def pageExists(id: String): Boolean = fileForPage(id).filter(_.exists).isDefined
 
-  def getPage(id: String): Option[Page] =
-    for {
-      raw <- rawContentsOfPage(id)
-      doc = parseDocument(raw)
-    } yield Page(id, renderTitle(doc), renderBody(doc), raw)
+  def getPage(id: String): Future[Option[Page]] = ???
 
-  def savePage(id: String, content: String): Future[Page] = Future {
-    val writer = fileForPage(id).fold[FileWriter](throw MissingConfigException("pages.root")) { file =>
-      new FileWriter(file)
-    }
-    try {
-      writer.write(content)
-    } finally writer.close
-    val document = parse.fromString(content)
-    Page(id, renderTitle(document), renderBody(document), content)
-  }
+  def pageExists(id: String): Future[Boolean] = ???
 
-  case class MissingConfigException(key: String)
-    extends RuntimeException(s"Missing configuration key: ${key}")
+  def savePage(id: String, content: String): Future[Page] = ???
 }
