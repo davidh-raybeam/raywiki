@@ -73,14 +73,19 @@ class PageController @Inject() (pages: PageRepository, val messagesApi: Messages
   }
 
   def createPage = NavigationAction.async { implicit request =>
+    implicit val navigation = request.navigation
     createForm.bindFromRequest.fold(
       formWithErrors => {
-        implicit val navigation = request.navigation
         Future.successful(BadRequest(views.html.newPage(formWithErrors)))
       },
       createRequest => {
-        pages.savePage(createRequest.id, createRequest.content).map { page =>
-          Redirect(routes.PageController.page(page.id))
+        pages.createPage(createRequest.id, createRequest.content).map { pageId =>
+          Redirect(routes.PageController.page(pageId))
+        }.recover {
+          case e: PageRepository.DuplicatePageException => {
+            val formWithErrors = createForm.bindFromRequest.withError("pageid", "pageid.unique")
+            BadRequest(views.html.newPage(formWithErrors))
+          }
         }
       }
     )
@@ -97,8 +102,8 @@ class PageController @Inject() (pages: PageRepository, val messagesApi: Messages
         Future.successful(BadRequest(views.html.editPage(formWithErrors)))
       },
       updateRequest => {
-        pages.savePage(request.page.id, updateRequest.content).map { page =>
-          Redirect(routes.PageController.page(page.id))
+        pages.updatePage(request.page.id, updateRequest.content).map { pageId =>
+          Redirect(routes.PageController.page(pageId))
         }
       }
     )

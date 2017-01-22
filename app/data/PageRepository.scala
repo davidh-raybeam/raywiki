@@ -30,10 +30,14 @@ object PageRepository {
     }
   }
 
-  private def renderBody(rawContent: String) = {
-    val doc = parse.fromString(rawContent).rewrite(linkRewriter)
-    render.from(doc).toString
-  }
+  private def parseDocument(rawContent: String) =
+    parse.fromString(rawContent).rewrite(linkRewriter)
+
+  private def renderBody(rawContent: String) =
+    render.from(parseDocument(rawContent)).toString
+
+  private def renderTitle(rawContent: String) =
+    parseDocument(rawContent).title.map(render.from(_).toString).mkString
 
   private def dbRowToPage(row: (String, String, String)) = row match {
     case (id, title, rawContent) =>
@@ -52,13 +56,28 @@ object PageRepository {
     def * = (id, title, rawContent) <> (dbRowToPage, pageToDbRow)
   }
   val pages = TableQuery[PageTable]
+
+  def byId(id: String) = pages.filter(_.id === id)
+
+  def insert(id: String, rawContent: String): DBIO[Int] = {
+    val page = Page(id, renderTitle(rawContent), "", rawContent)
+    pages += page
+  }
+
+  def update(id: String, rawContent: String): DBIO[Int] = {
+    val title = renderTitle(rawContent)
+    byId(id).map(p => (p.title, p.rawContent)).update((title, rawContent))
+  }
+
+  case class DuplicatePageException(id: String)
+    extends RuntimeException(s"A page with id $id already exists.")
 }
 
 @Singleton
 class PageRepository @Inject() (dbConfigProvider: DatabaseConfigProvider) {
   private val dbConfig = dbConfigProvider.get[SQLiteDriver]
   private val db = dbConfig.db
-  import PageRepository.pages
+  import PageRepository._
 
   def getPage(id: String): Future[Option[Page]] =
     db.run(pages.filter(_.id === id).result.headOption)
@@ -66,5 +85,14 @@ class PageRepository @Inject() (dbConfigProvider: DatabaseConfigProvider) {
   def pageExists(id: String): Future[Boolean] =
     db.run(pages.filter(_.id === id).exists.result)
 
-  def savePage(id: String, content: String): Future[Page] = ???
+  def createPage(id: String, rawContent: String): Future[String] =
+    pageExists(id).flatMap { pageAlreadyExists =>
+      if (pageAlreadyExists)
+        Future.failed(DuplicatePageException(id))
+      else
+        db.run(insert(id, rawContent)).map(_ => id)
+    }
+
+  def updatePage(id: String, rawContent: String): Future[String] =
+    db.run(update(id, rawContent)).map(_ => id)
 }
