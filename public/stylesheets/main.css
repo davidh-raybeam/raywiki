@@ -77,6 +77,16 @@ nav ul li {
   padding: 0 0.5em;
 }
 
+aside.flash {
+  padding: 0.5em 0;
+  text-align: center;
+}
+
+aside.flash.info {
+  background-color: #def;
+  color: #008;
+}
+
 article aside {
   float: right;
   background-color: #eee;
@@ -97,6 +107,10 @@ form dl.error {
   background-color: #fcc;
 }
 
+form dl.error dt, form dl.error dd span.error {
+  color: #800;
+}
+
 form dl dt {
   font-weight: bold
 }
@@ -115,7 +129,7 @@ form dl dd.error {
   color: #800;
 }
 
-form input[type="text"] {
+form input[type="text"], form input[type="password"] {
   padding: 0.5em;
   width: 25%;
   font-size: 1em;

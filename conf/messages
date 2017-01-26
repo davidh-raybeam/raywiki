@@ -1,6 +1,17 @@
-# https://www.playframework.com/documentation/latest/ScalaI18N
+# Pages
 pageid=Page ID
 pageid.pattern=Numbers and lowercase letters only
 pageid.pattern.error=Must consist only of numbers and lowercase letters
 pageid.unique=Page ID is already taken
 content=Page Content
+
+# Sessions
+username=Username
+password=Password
+passwordConfirmation=Confirm Password
+passwords.must.match=Password and confirmation must match
+username.already.exists=The username you selected already exists.
+login.successful=You have successfully logged in.
+login.unsuccessful=Incorrect username and/or password
+signed.out=You have successfully logged out.
+signup.successful=You have successfully signed up.
