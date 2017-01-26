@@ -6,7 +6,7 @@ import play.api.data.Forms._
 case class SignUp(username: String, password: String, passwordConfirmation: String)
 
 object SignUp {
-  val form = Form(
+  lazy val form = Form(
     mapping(
       "username" -> nonEmptyText,
       "password" -> nonEmptyText,

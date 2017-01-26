@@ -9,7 +9,7 @@ import play.api.data.Forms._
 case class EditPage(content: String)
 
 object EditPage {
-  def form = Form(
+  lazy val form = Form(
     mapping(
       "content" -> text
     )(EditPage.apply)(EditPage.unapply)
