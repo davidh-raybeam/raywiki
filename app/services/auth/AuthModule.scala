@@ -9,6 +9,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import com.mohiva.play.silhouette.api.{ Environment, Silhouette, SilhouetteProvider, EventBus }
 import com.mohiva.play.silhouette.api.util.{ PasswordHasherRegistry, FingerprintGenerator, Clock }
 import com.mohiva.play.silhouette.api.crypto.{ CrypterAuthenticatorEncoder, Crypter }
+import com.mohiva.play.silhouette.api.actions.{ SecuredErrorHandler, UnsecuredErrorHandler }
 import com.mohiva.play.silhouette.api.services.AuthenticatorService
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.impl.util.DefaultFingerprintGenerator
@@ -24,6 +25,8 @@ import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 class AuthModule extends AbstractModule with ScalaModule {
   def configure(): Unit = {
     bind[Silhouette[Env]].to[SilhouetteProvider[Env]]
+    bind[SecuredErrorHandler].to[ErrorHandler]
+    bind[UnsecuredErrorHandler].to[ErrorHandler]
 
     bind[EventBus].toInstance(EventBus())
     bind[Clock].toInstance(Clock())

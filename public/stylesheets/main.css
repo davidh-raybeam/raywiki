@@ -87,6 +87,11 @@ aside.flash.info {
   color: #008;
 }
 
+aside.flash.error {
+  background-color: #fcc;
+  color: #800;
+}
+
 article aside {
   float: right;
   background-color: #eee;

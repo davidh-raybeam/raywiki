@@ -23,8 +23,10 @@
         }
       </ul>
     </nav>
-    @flash.get("info").map { message =>
-      <aside class="flash info">@Messages(message)</aside>
+    @for(key <- Seq("info", "error")) {
+      @flash.get(key).map { message =>
+        <aside class="flash @key">@Messages(message)</aside>
+      }
     }
     <article>
       @content

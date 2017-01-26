@@ -32,7 +32,7 @@ class SessionController @Inject() (
     request.identity.fold[Result]{
       Ok(views.html.session.login(Login.form))
     } { _ =>
-      Redirect(routes.PageController.home)
+      Redirect(routes.PageController.page("home")).flashing("info" -> "already.logged.in")
     }
   }
 

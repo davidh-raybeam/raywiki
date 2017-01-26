@@ -1,8 +1,8 @@
 @import helper._
 @import controllers.forms.Login
-@(loginForm: Form[Login])(implicit messages: Messages, headers: RequestHeader)
+@(loginForm: Form[Login])(implicit messages: Messages, headers: RequestHeader, flash: Flash)
 
-@main("Log In") {
+@main("Log In", None, flash) {
   @form(action = routes.SessionController.handleSignIn) {
     <aside>
       <ul>
