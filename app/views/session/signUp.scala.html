@@ -1,0 +1,26 @@
+@import helper._
+@import controllers.forms.SignUp
+@(signUpForm: Form[SignUp])(implicit messages: Messages, headers: RequestHeader)
+
+@main("Sign Up") {
+  @form(action = routes.SessionController.handleSignUp) {
+    <h1>Sign Up</h1>
+    @if(signUpForm.hasGlobalErrors) {
+      <dl class="error">
+        <dt>Login Unsuccessful</dt>
+        @for(error <- signUpForm.globalErrors) {
+          <dd><span class="error">@Messages(error.messages, error.args)</span></dd>
+        }
+      </dl>
+    }
+    @inputText(signUpForm("username"))
+    @inputPassword(signUpForm("password"))
+    @inputPassword(signUpForm("passwordConfirmation"))
+    @CSRF.formField
+    <dl>
+      <dt>
+        <button type="submit">Create Account</button>
+      </dt>
+    </dl>
+  }
+}

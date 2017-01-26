@@ -6,5 +6,12 @@ POST    /new                        controllers.PageController.createPage
 GET     /edit/:id                   controllers.PageController.editPage(id)
 POST    /edit/:id                   controllers.PageController.updatePage(id)
 
+## Sessions
+GET     /login                      controllers.SessionController.signIn
+POST    /login                      controllers.SessionController.handleSignIn
+GET     /logout                     controllers.SessionController.signOut
+GET     /sign-up                    controllers.SessionController.signUp
+POST    /sign-up                    controllers.SessionController.handleSignUp
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

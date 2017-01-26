@@ -1,0 +1,30 @@
+@import helper._
+@import controllers.forms.Login
+@(loginForm: Form[Login])(implicit messages: Messages, headers: RequestHeader)
+
+@main("Log In") {
+  @form(action = routes.SessionController.handleSignIn) {
+    <aside>
+      <ul>
+        <li><a href="@routes.SessionController.signUp">Sign Up</a></li>
+      </ul>
+    </aside>
+    <h1>Log In</h1>
+    @if(loginForm.hasGlobalErrors) {
+      <dl class="error">
+        <dt>Login Unsuccessful</dt>
+        @for(error <- loginForm.globalErrors) {
+          <dd><span class="error">@Messages(error.messages, error.args)</span></dd>
+        }
+      </dl>
+    }
+    @inputText(loginForm("username"))
+    @inputPassword(loginForm("password"))
+    @CSRF.formField
+    <dl>
+      <dt>
+        <button type="submit">Log In</button>
+      </dt>
+    </dl>
+  }
+}
