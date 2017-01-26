@@ -1,0 +1,7 @@
+@import models.User
+@(pageId: String, identity: Option[User])(implicit messages: Messages)
+
+@main("Page Not Found", identity) {
+  <h1>Page Not Found</h1>
+  <p>No page with id "@pageId" was found.</p>
+}

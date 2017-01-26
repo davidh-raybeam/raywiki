@@ -28,22 +28,22 @@ class PageController @Inject() (
   silhouette: Silhouette[Env],
   val messagesApi: MessagesApi
 ) extends Controller with I18nSupport {
-  
+
   import PageController.PageRequest
   private case class LoadPage(id: String) extends ActionRefiner[Request, PageRequest] {
     def refine[A](request: Request[A]): Future[Either[Result, PageRequest[A]]] = {
+      val identity: Option[User] = request match {
+        case SecuredRequest(user: User, _, _) => Some(user)
+        case UserAwareRequest(userOpt, _, _) => userOpt match {
+          case Some(user: User) => Some(user)
+          case _ => None
+        }
+        case _ => None
+      }
       pages.getPage(id).map { pageOption =>
         pageOption.map { page =>
-          val identity: Option[User] = request match {
-            case SecuredRequest(user: User, _, _) => Some(user)
-            case UserAwareRequest(userOpt, _, _) => userOpt match {
-              case Some(user: User) => Some(user)
-              case _ => None
-            }
-            case _ => None
-          }
           PageRequest(page, identity, request)
-        }.toRight(NotFound.as(HTML))
+        }.toRight(NotFound(views.html.errors.notFound(id, identity)))
       }
     }
   }
