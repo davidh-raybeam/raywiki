@@ -1,0 +1,13 @@
+@import controllers.PageController.PageRequest
+@()(implicit request: PageRequest[_], messages: Messages, flash: Flash)
+
+@main(request.page.title, request.identity, flash) {
+  @request.identity.map { _ =>
+    <aside>
+      <ul>
+        <li><a href="@routes.PageController.editPage(request.page.id)">Edit this page</a></li>
+      </ul>
+    </aside>
+  }
+  @Html(request.page.content)
+}

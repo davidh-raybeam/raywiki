@@ -1,9 +1,8 @@
 @import helper._
-@import controllers.forms.NewPageRequest
-@import controllers.PageController.Navigation
-@(pageForm: Form[NewPageRequest])(implicit messages: Messages, headers: RequestHeader, navigation: Navigation)
+@import controllers.forms.CreatePage
+@(pageForm: Form[CreatePage], identity: User)(implicit messages: Messages, headers: RequestHeader)
 
-@main("New Page")(navigation) {
+@main("New Page", Some(identity)) {
   <aside>
     <ul>
       <li><a href="@routes.PageController.home()">Home</a></li>

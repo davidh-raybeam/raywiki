@@ -1,5 +1,5 @@
-@import controllers.PageController.Navigation
-@(title: String)(navigation: Navigation)(content: Html)
+@import models.User
+@(title: String, currentUser: Option[User] = None, flash: Flash = Flash())(content: Html)(implicit messages: Messages)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,8 +13,19 @@
       <h1>Demo Play Application</h1>
     </header>
     <nav>
-      @navigation.content.map(Html.apply).getOrElse("")
+      <ul>
+        <li><a href="@routes.PageController.home">Home</a></li>
+        @currentUser.fold {
+          <li><a href="@routes.SessionController.signIn">Log In</a></li>
+        }{ user =>
+          <li><a href="@routes.PageController.newPage">Create New Page</a></li>
+          <li>Logged in as @user.username (<a href="@routes.SessionController.signOut">Log Out</a>)</li>
+        }
+      </ul>
     </nav>
+    @flash.get("info").map { message =>
+      <aside class="flash info">@Messages(message)</aside>
+    }
     <article>
       @content
     </article>
